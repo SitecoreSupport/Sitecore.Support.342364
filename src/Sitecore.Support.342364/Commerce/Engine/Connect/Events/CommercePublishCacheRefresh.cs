@@ -75,8 +75,13 @@ namespace Sitecore.Support.Commerce.Engine.Connect.Events
             var remoteEventArgs = args as PublishEndRemoteEventArgs;
             if (remoteEventArgs != null)
             {
+                #region modified part of the code - instead of using remoteEventArgs.TargetDatabaseName use value of the "Sitecore.Support.CommercePublishCacheRefresh.TargetDatabase" setting or "web" as a default value
+
+                string targetDatabase = Settings.GetSetting("Sitecore.Support.CommercePublishCacheRefresh.TargetDatabase", "web");
+
                 var database =
-                    Factory.GetDatabase(remoteEventArgs.TargetDatabaseName);
+                    Factory.GetDatabase(targetDatabase);
+
 
                 var rootItem =
                     database.GetItem(new ID(remoteEventArgs.RootItemId));
@@ -84,9 +89,10 @@ namespace Sitecore.Support.Commerce.Engine.Connect.Events
                 return new ItemPublishOptions
                 {
                     TargetDatabase = database,
-                    TargetDatabaseName = remoteEventArgs.TargetDatabaseName,
+                    TargetDatabaseName = targetDatabase,
                     RootItem = rootItem
                 };
+                #endregion
             }
 
             return null;
